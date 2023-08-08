@@ -83,6 +83,7 @@ add_compile_definitions (${PROJECT_DEFINES})
 include_directories (${PROJECT_INCLUDES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Libs/libSSTc.a )
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Libs/libF303RE_BSP.a)
 
 set (CMAKE_EXECUTABLE_SUFFIX ".elf")
 set (CMAKE_STATIC_LIBRARY_SUFFIX ".a")
