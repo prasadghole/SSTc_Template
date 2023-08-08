@@ -80,7 +80,12 @@ elseif (${PROJECT_TYPE} MATCHES ${PROJECT_TYPE_STATIC_LIBRARY})
 endif()
 
 add_compile_definitions (${PROJECT_DEFINES})
+add_compile_definitions(USE_HAL_DRIVER STM32F303xE)
 include_directories (${PROJECT_INCLUDES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/../F303RE_BSP/Core/inc)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/../F303RE_BSP/Drivers/CMSIS/Device/ST/STM32F3xx/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/../F303RE_BSP/Drivers/CMSIS/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/../F303RE_BSP/Drivers/STM32F3xx_HAL_Driver/inc)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Libs/libSSTc.a )
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Libs/libF303RE_BSP.a)

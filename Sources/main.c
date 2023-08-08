@@ -19,6 +19,9 @@
 #include <stdint.h>
 #include "SST.h"
 #include "LED_AO.h"
+#include "stm32f3xx.h"
+
+#define BSP_TICKS_PER_SEC 1000U
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -26,13 +29,13 @@
 void DBC_fault_handler(char const * const module, int const label) {}
 /* SST callbacks ===========================================================*/
 void SST_onStart(void) {
-//   SystemCoreClockUpdate();
-//
-//   /* set up the SysTick timer to fire at BSP_TICKS_PER_SEC rate */
-//   SysTick_Config((SystemCoreClock / BSP_TICKS_PER_SEC) + 1U);
-//
-//   /* set priorities of ISRs used in the system */
-//   NVIC_SetPriority(SysTick_IRQn, 0U);
+   SystemCoreClockUpdate();
+
+   /* set up the SysTick timer to fire at BSP_TICKS_PER_SEC rate */
+   SysTick_Config((SystemCoreClock / BSP_TICKS_PER_SEC) + 1U);
+
+   /* set priorities of ISRs used in the system */
+   NVIC_SetPriority(SysTick_IRQn, 0U);
    /* ... */
 }
 /*..........................................................................*/
