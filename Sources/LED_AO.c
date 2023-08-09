@@ -1,11 +1,3 @@
-/*
- * LED_Ao.c
- *
- *  Created on: Aug 8, 2023
- *      Author: pghole
- */
-
-
 #include "LED_AO.h"
 #include "stm32f3xx.h"
 
@@ -28,8 +20,26 @@ static void LEDAO_ctor(LED_AO * const me)
     (SST_Handler)&LEDAO_dispatch);
 }
 
+/**
+ * @fn void LEDAO_Initialize(void)
+ * @brief
+ *
+ * @pre
+ * @post
+ */
 static void LEDAO_init(LED_AO * const me, SST_Evt const * const ie)
-{}
+{
+
+}
+/**
+ * @fn void LEDAO_dispatch(LED_AO* const, const SST_Evt* const)
+ * @brief
+ *
+ * @pre
+ * @post
+ * @param me
+ * @param e
+ */
 static void LEDAO_dispatch(LED_AO *const me, SST_Evt const *const e) {
 	switch (e->sig) {
 	case LED_ON:
@@ -41,7 +51,13 @@ static void LEDAO_dispatch(LED_AO *const me, SST_Evt const *const e) {
 	}
 }
 
-
+/**
+ * @fn void LEDAO_Initialize(void)
+ * @brief
+ *
+ * @pre
+ * @post
+ */
 void LEDAO_Initialize(void)
 {
 	LEDAO_ctor(&LED_AO_instance);

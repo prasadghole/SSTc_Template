@@ -47,8 +47,6 @@ set (PROJECT_SOURCES
 	# LIST SOURCE FILES HERE
 	Startup/startup_stm32f303retx.s
 	Sources/main.c
-	Sources/syscalls.c
-	Sources/sysmem.c
 	Sources/LED_AO.c
 
 	)

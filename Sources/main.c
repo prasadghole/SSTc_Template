@@ -31,16 +31,17 @@ static void System_Init(void);
 
 int main(void)
 {
-	SST_init();
-	System_Init();
+  SST_init();
+  System_Init();
 
-	LEDAO_Initialize();
+  LEDAO_Initialize();
 
- static SST_Evt const * LED_AOq[10];
+  static SST_Evt const *LED_AOq[10];
 
- SST_Task_start(ptrLED_AO,1U,LED_AOq,ARRAY_NELEM(LED_AOq),(SST_Evt const *)0);
+  SST_Task_start(ptrLED_AO, 1U, LED_AOq, ARRAY_NELEM(LED_AOq),
+      (SST_Evt const*) 0);
 
-	return SST_Task_run();
+  return SST_Task_run();
 }
 
 
