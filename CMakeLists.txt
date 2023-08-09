@@ -48,6 +48,8 @@ set (PROJECT_SOURCES
 	Startup/startup_stm32f303retx.s
 	Sources/main.c
 	Sources/LED_AO.c
+	Sources/Keyboard.c
+	Sources/Interrupts.c
 
 	)
 

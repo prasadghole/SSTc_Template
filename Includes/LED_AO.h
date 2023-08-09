@@ -28,5 +28,6 @@ typedef struct
 
 extern SST_Task *const ptrLED_AO;
 extern void LEDAO_Initialize(void);
+extern void LEDAO_Start(void);
 
 #endif /* INCLUDES_LED_AO_H_ */
