@@ -19,9 +19,30 @@
 #include <stdint.h>
 #include "SST.h"
 #include "LED_AO.h"
+#include "gpio.h"
 #include "stm32f3xx.h"
 
 #define BSP_TICKS_PER_SEC 1000U
+
+
+
+static void System_Init(void);
+
+
+int main(void)
+{
+	SST_init();
+	System_Init();
+
+	LEDAO_Initialize();
+
+ static SST_Evt const * LED_AOq[10];
+
+ SST_Task_start(ptrLED_AO,1U,LED_AOq,ARRAY_NELEM(LED_AOq),(SST_Evt const *)0);
+
+	return SST_Task_run();
+}
+
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -45,10 +66,67 @@ void SST_onIdle(void) {
 #endif
 }
 
-int main(void)
+void PVD_IRQHandler(void)
 {
-	SST_init();
-	LEDAO_Initialize();
-    /* Loop forever */
-	for(;;);
+SST_Task_activate(ptrLED_AO);
+}
+
+
+static void System_Init(void)
+{
+
+    /* Configure the MPU to prevent NULL-pointer dereferencing
+    * see: www.state-machine.com/null-pointer-protection-with-arm-cortex-m-mpu
+    */
+    MPU->RBAR = 0x0U                          /* base address (NULL) */
+                | MPU_RBAR_VALID_Msk          /* valid region */
+                | (MPU_RBAR_REGION_Msk & 7U); /* region #7 */
+    MPU->RASR = (7U << MPU_RASR_SIZE_Pos)     /* 2^(7+1) region */
+                | (0x0U << MPU_RASR_AP_Pos)   /* no-access region */
+                | MPU_RASR_ENABLE_Msk;        /* region enable */
+
+    MPU->CTRL = MPU_CTRL_PRIVDEFENA_Msk       /* enable background region */
+                | MPU_CTRL_ENABLE_Msk;        /* enable the MPU */
+    __ISB();
+    __DSB();
+
+    /* repurpose regular IRQs for SST Tasks */
+    SST_Task_setIRQ(ptrLED_AO,  PVD_IRQn);
+
+    MX_GPIO_Init();
+
+
+}
+
+#define B1_PIN 13
+void SysTick_Handler(void);  /* prototype */
+void SysTick_Handler(void)
+{ /* system clock tick ISR */
+
+  SST_TimeEvt_tick(); /* process all SST time events */
+
+  static struct ButtonsDebouncing {
+		uint32_t depressed;
+		uint32_t previous;
+	} buttons = { 0U, 0U };
+
+
+	uint32_t current = ~GPIOC->IDR; /* read GPIO PortC */
+	uint32_t tmp = buttons.depressed; /* save the debounced depressed */
+	buttons.depressed |= (buttons.previous & current); /* set depressed */
+	buttons.depressed &= (buttons.previous | current); /* clear released */
+	buttons.previous = current; /* update the history */
+	tmp ^= buttons.depressed; /* changed debounced depressed */
+
+	if ((tmp & (1U << B1_PIN)) != 0U) { /* debounced B1 state changed? */
+		if ((buttons.depressed & (1U << B1_PIN)) != 0U) { /* depressed? */
+			static LED_Evt const pressEvt = { .super.sig =
+					LED_ON, .pin = B1_PIN };
+			SST_Task_post(ptrLED_AO, &pressEvt.super);
+		} else { /* B1 is released */
+			static LED_Evt const pressEvt = { .super.sig =
+					LED_OFF, .pin = 13 };
+			SST_Task_post(ptrLED_AO, &pressEvt.super);
+		}
+	}
 }
